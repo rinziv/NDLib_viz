@@ -1,23 +1,29 @@
 <template>
-  <div id="app" class="container">
-    {{ $store.state.token }}
+  <div id="app">
+    <nav class="navbar bg-dark navbar-static-top navbar-inverse">
+      <a class="navbar-brand" href="#">NDLib</a>
+      <div class="navbar-collapse collapse"></div>
+    </nav>
+    <div class="container">
+      <div class="jumbotron">
+        <h1>Network Diffusion Library</h1>
+      </div>
+      <Experiment></Experiment>
+    </div>
+
   </div>
 </template>
 
 <script>
 
+  import Experiment from './components/Experiment'
+
 
 export default {
   name: 'app',
-  created:  function(){
-    console.log("created app");
-    this.$store.dispatch('createExperiment');
-  },
-  mounted: function(){
-    console.log("mounted");
-    console.log("token", this.$store.state.token);
-
-  },
+  components: {
+    Experiment
+  }
 
 }
 </script>
