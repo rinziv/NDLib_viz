@@ -10,21 +10,18 @@
       </div>
       <Experiment></Experiment>
     </div>
-
   </div>
 </template>
 
 <script>
-
   import Experiment from './components/Experiment'
-
 
 export default {
   name: 'app',
+
   components: {
     Experiment
   }
-
 }
 </script>
 

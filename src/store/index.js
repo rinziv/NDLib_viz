@@ -66,5 +66,13 @@ export const store = new Vuex.Store({
         })
     }
   },
-  getters:{}
+  getters:{
+    isNetworkEmpy: function (state) {
+      return state.network.nodes;
+    },
+
+    availableGenerators: function(state){
+      return state.availableGenerators;
+    }
+  }
 })
