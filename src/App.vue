@@ -1,28 +1,27 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <hello></hello>
+  <div id="app" class="container">
+    {{ $store.state.token }}
   </div>
 </template>
 
 <script>
-import Hello from './components/Hello'
+
 
 export default {
   name: 'app',
-  components: {
-    Hello
-  }
+  created:  function(){
+    console.log("created app");
+    this.$store.dispatch('createExperiment');
+  },
+  mounted: function(){
+    console.log("mounted");
+    console.log("token", this.$store.state.token);
+
+  },
+
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>

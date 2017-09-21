@@ -3,11 +3,17 @@
 import Vue from 'vue'
 import App from './App'
 
+
+import {store} from './store'
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 Vue.config.productionTip = false
+
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   template: '<App/>',
+  store: store,
   components: { App }
 })
