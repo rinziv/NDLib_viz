@@ -5,7 +5,7 @@
     </div>
     <div class="experiment-network col-md-4">
       <h5>Network</h5>
-      <div v-if="hasNetwork">network desription</div>
+      <div v-if="hasNetwork">network description</div>
       <div v-else>
         <div class="row">
           <p>No network loaded. Create a new one</p>
@@ -58,10 +58,10 @@
     },
     computed:{
       hasNetwork: function (){
-        return this.$store.getters.isNetworkEmpy;
+        return this.$store.getters.isNetworkEmpty;
       },
       hasModel: function () {
-        return this.$store.state.models.length>0
+        return this.$store.getters.hasModels;
       },
       availableGenerators: function () {
         return this.$store.getters.availableGenerators;

@@ -12,15 +12,30 @@ var instance = axios.create({
   baseURL: API_URL
 })
 
+function prepareRequestParameters(obj, injectToken){
+  var params = new URLSearchParams();
+  Object.keys(obj).forEach(function(k){
+    params.append(k, obj[k])
+  })
+
+  return params;
+}
+
+
 export const store = new Vuex.Store({
   state:{
     token:'',
     availableModels:[],
     availableGenerators:[],
-    models:[],
-    network:{}
+    describe:{},
+    content:{
+      network:{},
+      models:[],
+      iterations:{}
+    },
+    hasNetwork: false,
+    hasModels: false,
   },
-
   mutations:{
     setToken: function (state,token){
       state.token = token;
@@ -32,6 +47,27 @@ export const store = new Vuex.Store({
 
     setAvailableModels: function (state, models) {
       state.availableModels = models;
+    },
+    updateExperimentDescription: function(state, description){
+      state.describe = description;
+    },
+    updateHasModels: function(state, status){
+      state.hasModels = status;
+    },
+    updateNetwork: function(state, network){
+      state.content.network = network;
+      state.hasNetwork = status;
+    },
+    updateIterations: function(state, iteration){
+      Object.keys(iteration).forEach(function(m){
+        var iters = iteration[m];
+        var prevs = state.content.iterations[m] || [];
+
+        // I assume iterations are consecutive
+        var join = prevs.concat(iters);
+        state.content.iterations[m] = join;
+
+      })
     }
   },
   actions:{
@@ -47,6 +83,29 @@ export const store = new Vuex.Store({
           context.commit('setAvailableModels', response.data.endpoints);
         })
     },
+    loadExperimentDescrition: function(context) {
+      var params = prepareRequestParameters({
+        token:this.state.token
+      });
+
+      instance.post('ExperimentStatus', params)
+        .then(function (response) {
+          context.commit('updateExperimentDescription', response.data);
+        })
+    },
+
+
+    /**
+     * --------------------------------------------------
+     *                    EXPERIMENTS
+     * --------------------------------------------------
+     */
+
+    /**
+     * Function to creare a new experiment
+     *
+     * @param context
+     */
     createExperiment: function (context) {
       instance.get('Experiment')
         .then(response => {
@@ -54,25 +113,96 @@ export const store = new Vuex.Store({
           context.commit('setToken',response.data.token);
         })
     },
-
+    /**
+     * Destroy the current experiment
+     *
+     * @param context
+     */
     destroyExperiment: function(context){
-      instance.delete('Experiment', {
-        params:{
-          token:this.state.token
-        }
-        })
-        .then(function(response){
+      var params = prepareRequestParameters({
+        token: this.state.token
+      })
 
+      instance.delete('Experiment', params)
+      .then(function(response){
+        console.log(response);
+      })
+    },
+
+    /**
+     *  --------------------------------------------
+     *     NETWORK GENERATORS
+     *  --------------------------------------------
+     */
+    /**
+     * Generate a new graph according to the specific configuration
+     * Example of config format
+     * {
+     *  generator: 'ERGraph',
+     *  params:{
+     *    n:10,
+     *    p:0.1,
+     *    directed: false
+     *  }
+     * }
+     * @param context
+     * @param config
+     */
+    generateNetwork: function(context, config){
+      config.params.token = this.state.token;
+      var params = prepareRequestParameters(config.params);
+
+      instance.put('Generators/'+config.generator, params)
+        .then(function(response){
+          if(response.status==200){
+            // load network from the server
+            instance.post('GetGraph', params).then(function(resp){
+              console.log(resp);
+              context.commit('updateNetwork',resp.data);
+            })
+
+          }
         })
+        .catch(function(error){
+          console.log(error);
+        })
+    },
+
+    appendModel: function(context, config){
+      config.params.token = this.state.token;
+      var params = prepareRequestParameters(config.params);
+
+      instance.put(''+config.model, params).then(function(response){
+        console.log(response);
+      }).catch(function(error){
+        console.log(error);
+      })
+    },
+
+    iterate: function(context, config){
+      config.token = this.state.token;
+      var params = prepareRequestParameters(config);
+      var method = (config.bunch ? 'IterationBunch' : 'Iteration');
+
+      instance.post(method, params).then(function(response){
+        console.log(response);
+        context.commit('updateIterations', response.data);
+      }).catch(function(error){
+        console.log(error);
+      })
     }
   },
   getters:{
-    isNetworkEmpy: function (state) {
-      return state.network.nodes;
+    isNetworkEmpty: function (state) {
+      return state.hasNetwork;
     },
 
     availableGenerators: function(state){
       return state.availableGenerators;
+    },
+
+    hasModels: function(state){
+      return false//state.describe && state.describe.models.length
     }
   }
 })
