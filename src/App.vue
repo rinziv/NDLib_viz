@@ -13,6 +13,10 @@
         <NetworkDescriptor></NetworkDescriptor>
         <ModelsList></ModelsList>
       </div>
+      <div class="row">
+        <IterationsBrowser></IterationsBrowser>
+        <NetworkViewer></NetworkViewer>
+      </div>
 
     </div>
   </div>
@@ -22,6 +26,8 @@
   import Experiment from './components/Experiment'
   import NetworkDescriptor from './components/NetworkDescriptor'
   import ModelsList from './components/ModelsList'
+  import IterationsBrowser from './components/IterationsBrowser'
+  import NetworkViewer from './components/NetworkViewer'
 
 export default {
   name: 'app',
@@ -29,7 +35,9 @@ export default {
   components: {
     Experiment,
     NetworkDescriptor,
-    ModelsList
+    ModelsList,
+    IterationsBrowser,
+    NetworkViewer
   }
 }
 </script>

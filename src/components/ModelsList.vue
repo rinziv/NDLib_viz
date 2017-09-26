@@ -3,7 +3,7 @@
       <h4>Models</h4>
       <div v-if="hasModel" class="row">
         <div class="list-group">
-          <a v-for="(value,key) in models" href="#" class="list-group-item ">
+          <a v-for="(value,key) in models" :key="key" href="#" class="list-group-item ">
             <h4 class="list-group-item-heading">{{key}}</h4>
             <div class="row">
               <span v-for="(v,k) in value" class="col-md-6">
