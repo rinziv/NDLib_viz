@@ -56,12 +56,13 @@ export const store = new Vuex.Store({
     },
     updateNetwork: function(state, network){
       state.content.network = network;
-      state.hasNetwork = status;
+      state.hasNetwork = true;
     },
     updateIterations: function(state, iteration){
       Object.keys(iteration).forEach(function(m){
         var iters = iteration[m];
-        var prevs = state.content.iterations[m] || [];
+        var prevs = state.content.iterations[m];
+        if(!prevs) prevs = [];
 
         // I assume iterations are consecutive
         var join = prevs.concat(iters);
@@ -174,6 +175,14 @@ export const store = new Vuex.Store({
 
       instance.put(''+config.model, params).then(function(response){
         console.log(response);
+        if(response.status==200){
+          // load network from the server
+          instance.post('ExperimentStatus', params)
+            .then(function (resp) {
+              context.commit('updateExperimentDescription', resp.data);
+            })
+
+        }
       }).catch(function(error){
         console.log(error);
       })
@@ -202,7 +211,23 @@ export const store = new Vuex.Store({
     },
 
     hasModels: function(state){
-      return false//state.describe && state.describe.models.length
+      return state.describe.Models && Object.keys(state.describe.Models).length
+    },
+
+    getNumNodes: function(state){
+      return state.content.network.nodes?state.content.network.nodes.length : 0;
+    },
+
+    getNumEdges: function(state){
+      return state.content.network.links? state.content.network.links.length : 0;
+    },
+
+    getNetwork: function(state){
+      return state.content.network;
+    },
+
+    getModels: function(state){
+      return state.describe.Models ? state.describe.Models:  {};
     }
   }
 })

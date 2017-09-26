@@ -8,19 +8,28 @@
       <div class="jumbotron">
         <h1>Network Diffusion Library</h1>
       </div>
-      <Experiment></Experiment>
+      <div class="row">
+        <Experiment></Experiment>
+        <NetworkDescriptor></NetworkDescriptor>
+        <ModelsList></ModelsList>
+      </div>
+
     </div>
   </div>
 </template>
 
 <script>
   import Experiment from './components/Experiment'
+  import NetworkDescriptor from './components/NetworkDescriptor'
+  import ModelsList from './components/ModelsList'
 
 export default {
   name: 'app',
 
   components: {
-    Experiment
+    Experiment,
+    NetworkDescriptor,
+    ModelsList
   }
 }
 </script>
