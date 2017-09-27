@@ -2,11 +2,36 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 
+var d3 = require('d3');
+
 Vue.use(Vuex);
 
 
 
-const API_URL='http://localhost:5000/api/'
+const API_URL='http://localhost:5000/api/';
+
+const modelDescriptors ={
+  SI:{
+    state_labels:{
+      0:"Susceptible",
+        1:"Infected"
+    },
+    nodeColor: d3.scale.category20()
+      .domain([0,1])
+    // .range(colorbrewer['RdYlBu'][3])
+  },
+  SIR:{
+    state_labels:{
+      0:"Susceptible",
+        1:"Infected",
+        2:"Recovered"
+    },
+    nodeColor: d3.scale.category20()
+      .domain([0,1,2])
+    // .range(colorbrewer['RdYlBu'][3])
+  },
+}
+
 
 var instance = axios.create({
   baseURL: API_URL
@@ -34,7 +59,7 @@ export const store = new Vuex.Store({
       iterations:{}
     },
     hasNetwork: false,
-    hasModels: false,
+    hasModels: false
   },
   mutations:{
     setToken: function (state,token){
@@ -58,17 +83,62 @@ export const store = new Vuex.Store({
       state.content.network = network;
       state.hasNetwork = true;
     },
-    updateIterations: function(state, iteration){
-      Object.keys(iteration).forEach(function(m){
-        var iters = iteration[m];
+    updateIterations: function(state, iterations){
+
+      Object.entries(iterations).forEach(([modelName,values]) => {
+        values.forEach(function(i){
+          var ts = i.iteration;
+          Object.keys(i.status).forEach(function(j){
+            var node = state.content.network.nodes[j];
+            var evtModel = node.events || (node.events = {});
+            var evt = evtModel[modelName] || (evtModel[modelName] = []);
+            evt.push({i:ts, s: i.status[j]});
+          })
+        })
+      });
+
+      // accumulate iterations in the store
+      Object.keys(iterations).forEach(function(m){
+        var iters = iterations[m];
         var prevs = state.content.iterations[m];
         if(!prevs) prevs = [];
 
         // I assume iterations are consecutive
         var join = prevs.concat(iters);
         state.content.iterations[m] = join;
+      });
 
+      // compute derived statistics from the stored iterations
+      d3.keys(state.content.iterations).forEach(function(model){
+        var numIterations = state.content.iterations[model].length;
+        var modelName = model.split("_")[0];
+        var modelDescriptor  = modelDescriptors[modelName];
+        console.log(modelDescriptor);
+        var sums = {};
+        d3.keys(modelDescriptor["state_labels"]).forEach(function(s){
+          sums[s] = {
+            label: modelDescriptor.state_labels[s],
+            values: d3.range(numIterations).map(function(){return 0})
+          }
+        });
+        state.content.network.nodes.filter(function(n,i){return true})
+          .forEach(function(n,i){
+            n.events[model].forEach(function(e,j){
+              var nextPos = (j<n.events[model].length-1 ? n.events[model][j+1].i:numIterations);
+              var segnode = d3.range(e.i, nextPos);
+              // console.log(e.s,segnode);
+              segnode.forEach(function(p){
+                sums[e.s].values[p]++;
+              })
+            })
+          });
+        // var mv = app.modelViewers[model];
+        // mv.trendData(sums);
+        console.log("mv",sums);
       })
+
+
+
     }
   },
   actions:{
