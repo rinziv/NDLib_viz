@@ -16,6 +16,7 @@
       <div class="row">
         <IterationsBrowser></IterationsBrowser>
         <NetworkViewer></NetworkViewer>
+        <ModelStatsViewer></ModelStatsViewer>
       </div>
 
     </div>
@@ -28,6 +29,7 @@
   import ModelsList from './components/ModelsList'
   import IterationsBrowser from './components/IterationsBrowser'
   import NetworkViewer from './components/NetworkViewer'
+  import ModelStatsViewer from './components/ModelStatsViewer'
 
 export default {
   name: 'app',
@@ -37,7 +39,8 @@ export default {
     NetworkDescriptor,
     ModelsList,
     IterationsBrowser,
-    NetworkViewer
+    NetworkViewer,
+    ModelStatsViewer
   }
 }
 </script>

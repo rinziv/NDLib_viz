@@ -3,7 +3,7 @@
       <h4>Models</h4>
       <div v-if="hasModel" class="row">
         <div class="list-group">
-          <a v-for="(value,key) in models" :key="key" href="#" class="list-group-item ">
+          <a v-for="(value,key) in models" :key="key" href="#" :id="key" class="list-group-item" v-on:click="selectModel(key)">
             <h4 class="list-group-item-heading">{{key}}</h4>
             <div class="row">
               <span v-for="(v,k) in value" class="col-md-6">
@@ -37,6 +37,12 @@
         return this.$store.getters.getModels;
       }
     },
+    methods:{
+      selectModel: function(key){
+        console.log('key',key);
+        this.$store.state.activeModel = key;
+      }
+    }
   }
 </script>
 

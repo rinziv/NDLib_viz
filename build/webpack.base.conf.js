@@ -22,6 +22,7 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
+      'nvd3': 'nvd3/build/nv.d3.js',
       '@': resolve('src'),
     }
   },

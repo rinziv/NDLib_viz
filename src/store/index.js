@@ -56,10 +56,12 @@ export const store = new Vuex.Store({
     content:{
       network:{},
       models:[],
-      iterations:{}
+      iterations:{},
+      series:{}
     },
     hasNetwork: false,
-    hasModels: false
+    hasModels: false,
+    activeModel:null,
   },
   mutations:{
     setToken: function (state,token){
@@ -84,8 +86,11 @@ export const store = new Vuex.Store({
       state.hasNetwork = true;
     },
     updateIterations: function(state, iterations){
-
+      console.log("iterations [M]", iterations);
       Object.entries(iterations).forEach(([modelName,values]) => {
+        if(!(values.constructor === Array))
+          values = [values];
+
         values.forEach(function(i){
           var ts = i.iteration;
           Object.keys(i.status).forEach(function(j){
@@ -134,7 +139,8 @@ export const store = new Vuex.Store({
           });
         // var mv = app.modelViewers[model];
         // mv.trendData(sums);
-        console.log("mv",sums);
+        // console.log("mv",sums);
+        state.content.series[model] = sums;
       })
 
 

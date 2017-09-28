@@ -1,5 +1,5 @@
 <template>
-    <div class="experiment-newtork-viewer col-md-12">
+    <div class="experiment-newtork-viewer col-md-6">
       <h4>Network</h4>
       <canvas :width="width" :height="height" id="netviz" ref="netviz"></canvas>
     </div>
