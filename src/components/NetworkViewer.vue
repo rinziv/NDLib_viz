@@ -9,12 +9,15 @@
 
   var d3Force = require('d3-force');
   var d3Selection = require('d3-selection');
+  var d3Zoom = require('d3-zoom');
+  var d3Quadtree = require('d3-quadtree');
   var d3 = require('d3');
 
   function NetworkLayout(){
     var graph = {};
 
     var simulation = d3Force.forceSimulation()
+
       .force("charge", d3Force.forceManyBody().strength(-30))
       .force("link", d3Force.forceLink().distance(30).id(function(d) { return d.id; }))
       .force("x", d3Force.forceX())
@@ -24,48 +27,121 @@
     var width = 500;
     var height = 500;
 
+    var currentTransform = d3Zoom.zoomIdentity.translate(width/2,height/2);
+    var qtree = d3Quadtree.quadtree()
+      .x(function(d){return d.x})
+      .y(function(d){return d.y});
+
 
     function me(selection){
       graph = selection.datum();
+
       ctx = selection.node().getContext("2d");
 
+      selection.call(d3Zoom.zoom().scaleExtent([0.2,8]).on("zoom", zoom))
       console.log("datum", selection.datum());
       simulation
         .nodes(graph.nodes)
-        .on("tick", tick);
+        .on("tick", function(){console.log('tick')})
+        .on("end", function(){
+          qtree.addAll(graph.nodes);
+
+          tick();
+        });
       simulation
         .force("link").links(graph['links']);
-
+      tick();
+      simulation.alpha(0.1);
       simulation.restart();
+
+
+    }
+
+    function zoom(){
+      var transform = d3Selection.event.transform;
+      currentTransform = transform.translate(width/2, height/2);
+      ctx.clearRect(0, 0, width, height);
+
+      tick();
+      ctx.restore();
+    }
+
+    function isVisible(tl, br, d){
+      return (d.x >= tl[0]) && (d.x < br[0]) && (d.y >= tl[1]) && (d.y < br[1])
     }
 
     function tick(){
       console.log("tick");
-      ctx.clearRect(0,0,width,height);
       ctx.save();
-      ctx.translate(width/2, height/2);
+      ctx.clearRect(0,0,width,height);
+      ctx.translate(currentTransform.x, currentTransform.y);
+      ctx.scale(currentTransform.k, currentTransform.k);
+
+      // select only visible features
+
+      var offset = 50;
+      var tl = currentTransform.invert([0+offset,0+offset]);
+      var br = currentTransform.invert([width - offset,height-offset]);
+
+
+
+//      qtree.visit(function(node, x1, y1, x2, y2) {
+//        if (!node.length) {
+//          do {
+//            var d = node.data;
+//            d.selected = (d.x >= tl[0]) && (d.x < br[0]) && (d.y >= tl[1]) && (d.y < br[1]);
+//          } while (node = node.next);
+//        }
+//        return x1 >= br[0] || y1 >= br[1] || x2 < tl[0] || y2 < tl[1];
+//      });
+
+
       // draw links
       ctx.strokeStyle = "lightgray";
       // context.globalCompositeOperation = 'overlay';
-      ctx.globalAlpha = 0.1;
+      ctx.globalAlpha = 0.4;
       ctx.beginPath();
       graph.links.forEach(function(d) {
-        ctx.moveTo(d.source.x, d.source.y);
-        ctx.lineTo(d.target.x, d.target.y);
+        if(isVisible(tl,br,d.source) && isVisible(tl,br,d.target)){
+          ctx.moveTo(d.source.x, d.source.y);
+          ctx.lineTo(d.target.x, d.target.y);
+        }
+
       });
       ctx.stroke();
 
       // draw nodes
-      ctx.fillStyle = 'steelblue';
+      ctx.fillStyle = 'darkgray';
       ctx.globalAlpha = 1.0;
       ctx.beginPath();
-
       graph.nodes.forEach(function(d){
-        ctx.moveTo(d.x,d.y);
-        ctx.arc(d.x, d.y, 4.5, 0, 2 * Math.PI);
+        if(isVisible(tl,br,d)){
+          ctx.moveTo(d.x,d.y);
+          ctx.arc(d.x, d.y, 4.5, 0, 2 * Math.PI);
+        }
       })
       ctx.fill();
+
+
+
+//      ctx.fillStyle = 'red';
+//      ctx.beginPath();
+//      ctx.moveTo(tl[0],tl[1]);
+//      ctx.arc(tl[0],tl[1],5,0,2*Math.PI);
+//      ctx.moveTo(br[0],br[1]);
+//      ctx.arc(br[0],br[1],5,0,2*Math.PI);
+//      ctx.fill();
+//
+//      ctx.fillStyle = 'green';
+//      ctx.beginPath();
+//      ctx.moveTo(0,0);
+//      ctx.arc(0,0,5,0,2*Math.PI);
+
+      ctx.fill();
+
       ctx.restore();
+
+
     }
 
     return me;
