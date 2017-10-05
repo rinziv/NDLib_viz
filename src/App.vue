@@ -9,12 +9,11 @@
         <h1>Network Diffusion Library</h1>
       </div>
       <div class="row">
-        <Experiment></Experiment>
         <NetworkDescriptor></NetworkDescriptor>
         <ModelsList></ModelsList>
+        <IterationsBrowser></IterationsBrowser>
       </div>
       <div class="row">
-        <IterationsBrowser></IterationsBrowser>
         <NetworkViewer></NetworkViewer>
         <ModelStatsViewer></ModelStatsViewer>
       </div>
@@ -24,6 +23,8 @@
 </template>
 
 <script>
+
+
   import Experiment from './components/Experiment'
   import NetworkDescriptor from './components/NetworkDescriptor'
   import ModelsList from './components/ModelsList'

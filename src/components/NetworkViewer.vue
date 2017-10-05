@@ -32,6 +32,21 @@
       .x(function(d){return d.x})
       .y(function(d){return d.y});
 
+    var theme = {
+      odd: {
+        evaluate: function(d){
+          return d.id % 2 != 0
+        },
+        color: "pink"
+      },
+      even: {
+        evaluate: function(d){
+          return d.id % 2 ==0
+        },
+        color: "steelblue"
+      }
+    }
+
 
     function me(selection){
       graph = selection.datum();
@@ -51,8 +66,8 @@
       simulation
         .force("link").links(graph['links']);
       tick();
-      simulation.alpha(0.1);
-      simulation.restart();
+//      simulation.alpha(0.1);
+//      simulation.restart();
 
 
     }
@@ -79,7 +94,7 @@
 
       // select only visible features
 
-      var offset = 50;
+      var offset = 0;
       var tl = currentTransform.invert([0+offset,0+offset]);
       var br = currentTransform.invert([width - offset,height-offset]);
 
@@ -111,16 +126,33 @@
       ctx.stroke();
 
       // draw nodes
-      ctx.fillStyle = 'darkgray';
-      ctx.globalAlpha = 1.0;
-      ctx.beginPath();
-      graph.nodes.forEach(function(d){
-        if(isVisible(tl,br,d)){
-          ctx.moveTo(d.x,d.y);
-          ctx.arc(d.x, d.y, 4.5, 0, 2 * Math.PI);
-        }
-      })
-      ctx.fill();
+      d3.entries(theme).forEach(function(e) {
+        var currentColor = e.value['color'];
+        ctx.fillStyle = currentColor;
+        ctx.beginPath();
+        graph.nodes
+          .filter(e.value['evaluate'])
+          .forEach(function (d) {
+            if (isVisible(tl, br, d)) {
+              ctx.moveTo(d.x, d.y);
+              ctx.arc(d.x, d.y, 4.5, 0, 2 * Math.PI);
+            }
+          });
+        ctx.fill()
+      });
+
+
+//
+//      ctx.fillStyle = 'darkgray';
+//      ctx.globalAlpha = 1.0;
+//      ctx.beginPath();
+//      graph.nodes.forEach(function(d){
+//        if(isVisible(tl,br,d)){
+//          ctx.moveTo(d.x,d.y);
+//          ctx.arc(d.x, d.y, 4.5, 0, 2 * Math.PI);
+//        }
+//      })
+//      ctx.fill();
 
 
 
