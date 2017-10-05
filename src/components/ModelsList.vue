@@ -1,50 +1,58 @@
 <template>
-  <div class="experiment-network col-md-4">
+  <el-col :span="8">
 
-    <div v-if="hasModel" class="row">
+    <el-row v-if="hasModel">
       <h4>2. Models</h4>
       <div class="list-group">
-        <a v-for="(value,key) in models" :key="key" href="#" :id="key" class="list-group-item"
-           v-on:click="selectModel(key)">
-          <h4 class="list-group-item-heading">{{key}}</h4>
-          <div class="row">
-              <span v-for="(v,k) in value" class="col-md-6">
-              <p class="list-group-item-text"><strong>{{k}}:</strong>{{v}}</p>
-            </span>
-          </div>
-        </a>
-      </div>
-    </div>
-    <div v-else>
-      <h4>2. Add a model</h4>
-      <p>Choose one or more models from the library</p>
-      <p>
-        <button type="button" class="btn btn-default" id="btn-create-model" data-toggle="modal"
-                data-target="#modal-create-model">
-          <span class="glyphicon glyphicon-modal-window" aria-hidden="true"></span> Add Model
-        </button>
-      </p>
-    </div>
-    <div class="modal fade" id="modal-create-model" tabIndex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4>Add a Model</h4>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="cmb-model-selection">
+        <el-row :gutter="3">
+          <el-col v-for="(value,key) in models" :span="8">
+            <el-button :key="key" v-on:click="selectModel(key)">{{key}}</el-button>
+          </el-col>
+        </el-row>
 
-              </div>
-              <div class="model-parameters">
 
-              </div>
-            </form>
-          </div>
-        </div>
+
+          <!--<h4 class="list-group-item-heading">{{key}}</h4>-->
+          <!--<div class="row">-->
+              <!--<span v-for="(v,k) in value" class="col-md-6">-->
+              <!--<p class="list-group-item-text"><strong>{{k}}:</strong>{{v}}</p>-->
+            <!--</span>-->
+          <!--</div>-->
+
       </div>
-    </div>
-  </div>
+    </el-row>
+    <el-row v-else>
+      <el-col>
+        <h4>2. Add a model</h4>
+        <p>Choose one or more models from the library</p>
+      </el-col>
+    </el-row>
+    <el-button type="primary" icon="menu" v-on:click="appendModel">Add model</el-button>
+  </el-col>
+
+
+
+
+    <!--<div class="modal fade" id="modal-create-model" tabIndex="-1" role="dialog">-->
+      <!--<div class="modal-dialog" role="document">-->
+        <!--<div class="modal-content">-->
+          <!--<div class="modal-header">-->
+            <!--<h4>Add a Model</h4>-->
+          <!--</div>-->
+          <!--<div class="modal-body">-->
+            <!--<form>-->
+              <!--<div class="cmb-model-selection">-->
+
+              <!--</div>-->
+              <!--<div class="model-parameters">-->
+
+              <!--</div>-->
+            <!--</form>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+
 
 </template>
 
@@ -67,11 +75,20 @@
       selectModel: function (key) {
         console.log('key', key);
         this.$store.state.activeModel = key;
+      },
+      appendModel: function(){
+        this.$store.dispatch('appendModel',{model:'SIR',params:{beta:0.1,infected:0.2,gamma:0.01}});
       }
     }
   }
 </script>
 
 <style>
-
+  .list-group .el-row{
+    margin: 4px auto
+  }
+  .list-group .el-row button{
+    width:100%;
+    margin-bottom: 5px;
+  }
 </style>

@@ -1,24 +1,19 @@
 <template>
-  <div id="app">
-    <nav class="navbar bg-dark navbar-static-top navbar-inverse">
-      <a class="navbar-brand" href="#">NDLib</a>
-      <div class="navbar-collapse collapse"></div>
-    </nav>
-    <div class="container">
-      <div class="jumbotron">
-        <h1>Network Diffusion Library</h1>
-      </div>
-      <div class="row">
-        <NetworkDescriptor></NetworkDescriptor>
-        <ModelsList></ModelsList>
-        <IterationsBrowser></IterationsBrowser>
-      </div>
-      <div class="row">
-        <NetworkViewer></NetworkViewer>
-        <ModelStatsViewer></ModelStatsViewer>
-      </div>
+  <div id="app" class="container page-component">
+    <Experiment></Experiment>
 
-    </div>
+    <el-row>
+      <h1 class="h1">Network Diffusion Library</h1>
+    </el-row>
+    <el-row :gutter="5">
+      <NetworkDescriptor></NetworkDescriptor>
+      <ModelsList></ModelsList>
+      <IterationsBrowser></IterationsBrowser>
+    </el-row>
+    <el-row>
+      <NetworkViewer></NetworkViewer>
+      <ModelStatsViewer></ModelStatsViewer>
+    </el-row>
   </div>
 </template>
 
@@ -47,5 +42,7 @@ export default {
 </script>
 
 <style>
-
+  #app {
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+  }
 </style>

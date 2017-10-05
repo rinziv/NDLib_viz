@@ -1,41 +1,43 @@
 <template>
-    <div class="experiment-network col-md-4">
-      <div v-if="hasNetwork" class="row">
+    <el-col :span="8">
+      <el-row v-if="hasNetwork">
         <h4>1. Network</h4>
-        <span class="col-md-6"><strong># nodes:</strong> {{this.$store.getters.getNumNodes}}</span>
-        <span class="col-md-6"><strong># edges:</strong> {{this.$store.getters.getNumEdges}}</span>
-      </div>
-      <div v-else>
-        <h4>1. Create Network</h4>
-        <p>Create a network to run your simulation</p>
-        <p><button type="button" class="btn btn-default" id="btn-create-network" data-toggle="modal" data-target="#modal-create-network"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create Network</button></p>
+        <el-col :span="12"><strong># nodes:</strong> {{this.$store.getters.getNumNodes}}</el-col>
+        <el-col :span="12"><strong># edges:</strong> {{this.$store.getters.getNumEdges}}</el-col>
+      </el-row>
+      <el-row v-else>
+        <el-col>
+          <h4>1. Create Network</h4>
+          <p>Create a network to run your simulation</p>
+          <el-button type="primary" icon="plus" @click="createNetwork">Create Network</el-button>
+        </el-col>
+      </el-row>
+    </el-col>
 
+  <!--<div class="row">-->
+  <!--<p>No network loaded. Create a new one</p>-->
+  <!--<div class="input-group">-->
+  <!--<select name="network-generator-cmb" id="network-generator-name" class="form-control" v-model="generator">-->
+  <!--<option v-for="model in availableGenerators">{{model.name}}</option>-->
+  <!--</select>-->
+  <!--<span class="input-group-btn">-->
+  <!--<button class="btn btn-default" type="button" v-on:click="createNetwork">Create...</button>-->
+  <!--</span>-->
+  <!--</div>-->
 
-        <div class="row">
-          <p>No network loaded. Create a new one</p>
-          <div class="input-group">
-            <select name="network-generator-cmb" id="network-generator-name" class="form-control" v-model="generator">
-              <option v-for="model in availableGenerators">{{model.name}}</option>
-            </select>
-            <span class="input-group-btn">
-          <button class="btn btn-default" type="button" v-on:click="createNetwork">Create...</button>
-        </span>
-        </div>
+  <!--<div class="row mt-2">-->
+  <!--<form class="form-horizontal">-->
+  <!--<div class="form-group">-->
+  <!--<label for="input1" class="col-sm-2">Label</label>-->
+  <!--<div class="col-sm-10">-->
+  <!--<input type="text" class="form-control" id="input1">-->
+  <!--</div>-->
+  <!--</div>-->
+  <!--</form>-->
+  <!--</div>-->
 
-          <div class="row mt-2">
-            <form class="form-horizontal">
-              <div class="form-group">
-                <label for="input1" class="col-sm-2">Label</label>
-                <div class="col-sm-10">
-                  <input type="text" class="form-control" id="input1">
-                </div>
-              </div>
-            </form>
-          </div>
+  <!--</div>-->
 
-        </div>
-      </div>
-    </div>
 </template>
 
 <script>
@@ -66,8 +68,7 @@
     },
     methods:{
       createNetwork: function () {
-        console.log(this.generator);
-        console.log(this.generatorParameters);
+        this.$store.dispatch('generateNetwork',{generator:'ERGraph',params:{n:500,p:0.01}});
       }
     }
   }

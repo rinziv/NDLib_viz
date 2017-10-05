@@ -1,8 +1,8 @@
 <template>
-    <div class="experiment-newtork-viewer col-md-6">
+    <el-col :span="12">
       <h4>Network</h4>
       <canvas :width="width" :height="height" id="netviz" ref="netviz"></canvas>
-    </div>
+    </el-col>
 </template>
 
 <script>
