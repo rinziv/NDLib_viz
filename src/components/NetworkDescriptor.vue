@@ -1,5 +1,5 @@
 <template>
-    <el-col :span="8">
+    <div>
       <el-row v-if="hasNetwork">
         <h4>1. Network</h4>
         <el-col :span="12"><strong># nodes:</strong> {{this.$store.getters.getNumNodes}}</el-col>
@@ -12,7 +12,7 @@
           <el-button type="primary" icon="plus" @click="createNetwork">Create Network</el-button>
         </el-col>
       </el-row>
-    </el-col>
+    </div>
 
   <!--<div class="row">-->
   <!--<p>No network loaded. Create a new one</p>-->

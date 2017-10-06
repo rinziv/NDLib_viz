@@ -1,24 +1,13 @@
 <template>
-  <el-col :span="8">
-
+  <div>
     <el-row v-if="hasModel">
       <h4>2. Models</h4>
       <div class="list-group">
         <el-row :gutter="3">
-          <el-col v-for="(value,key) in models" :span="8">
+          <el-col v-for="(value,key) in models" :key="key" :span="8">
             <el-button :key="key" v-on:click="selectModel(key)">{{key}}</el-button>
           </el-col>
         </el-row>
-
-
-
-          <!--<h4 class="list-group-item-heading">{{key}}</h4>-->
-          <!--<div class="row">-->
-              <!--<span v-for="(v,k) in value" class="col-md-6">-->
-              <!--<p class="list-group-item-text"><strong>{{k}}:</strong>{{v}}</p>-->
-            <!--</span>-->
-          <!--</div>-->
-
       </div>
     </el-row>
     <el-row v-else>
@@ -28,7 +17,7 @@
       </el-col>
     </el-row>
     <el-button type="primary" icon="menu" v-on:click="appendModel">Add model</el-button>
-  </el-col>
+  </div>
 
 
 

@@ -57,12 +57,16 @@
       console.log("datum", selection.datum());
       simulation
         .nodes(graph.nodes)
-        .on("tick", function(){console.log('tick')})
         .on("end", function(){
           qtree.addAll(graph.nodes);
-
+          // TODO: check if all nodes are visible. In case change zoom parameters
           tick();
         });
+
+      if(isNetworkManageable()){
+        simulation
+          .on("tick", tick)
+      }
       simulation
         .force("link").links(graph['links']);
       tick();
@@ -70,6 +74,10 @@
 //      simulation.restart();
 
 
+    }
+
+    function isNetworkManageable(){
+      return graph.nodes && graph.nodes.length < 1000;
     }
 
     function zoom(){
@@ -117,7 +125,7 @@
       ctx.globalAlpha = 0.4;
       ctx.beginPath();
       graph.links.forEach(function(d) {
-        if(isVisible(tl,br,d.source) && isVisible(tl,br,d.target)){
+        if(isNetworkManageable||(isVisible(tl,br,d.source) && isVisible(tl,br,d.target))){
           ctx.moveTo(d.source.x, d.source.y);
           ctx.lineTo(d.target.x, d.target.y);
         }

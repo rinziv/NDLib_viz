@@ -1,7 +1,18 @@
 <template>
     <div class="experiment-model-stats-viewer col-md-6">
       <h4>Model Statistics</h4>
-      <h6 v-if="this.$store.state.activeModel">Selected Model: {{activeModel}}</h6>
+      <div v-if="this.$store.state.activeModel">
+        <h6 >Selected Model: {{activeModel}}</h6>
+
+        <div class="row">
+          <p v-for="(v,k) in modelParameters">
+            <strong>{{k}}:</strong>{{v}}
+          </p>
+        </div>
+      </div>
+
+
+
       <div ref="modelviz">
 
       </div>
@@ -57,6 +68,19 @@
     computed:{
       activeModel: function(){
         return this.$store.state.activeModel;
+      },
+      modelParameters: function(){
+        var key = this.$store.state.activeModel;
+        var descr = this.$store.state.describe.Models[key];
+        console.log(descr);
+        var res = {};
+        Object.keys(descr).filter(function(k){
+          return k != "selected_initial_infected"
+        }).forEach(function(k){
+          res[k] = descr[k];
+        })
+
+        return res;
       }
     },
     watch:{

@@ -6,13 +6,17 @@
       <h1 class="h1">Network Diffusion Library</h1>
     </el-row>
     <el-row :gutter="5">
-      <NetworkDescriptor></NetworkDescriptor>
-      <ModelsList></ModelsList>
-      <IterationsBrowser></IterationsBrowser>
+      <el-col :sm="8"><NetworkDescriptor></NetworkDescriptor></el-col>
+      <el-col :sm="8"><ModelsList></ModelsList></el-col>
+      <el-col :sm="8"><IterationsBrowser></IterationsBrowser></el-col>
     </el-row>
-    <el-row>
-      <NetworkViewer></NetworkViewer>
-      <ModelStatsViewer></ModelStatsViewer>
+    <el-row :gutter="5">
+      <el-col :md="12">
+        <NetworkViewer></NetworkViewer>
+      </el-col>
+      <el-col :md="12">
+        <ModelStatsViewer></ModelStatsViewer>
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -42,7 +46,7 @@ export default {
 </script>
 
 <style>
-  #app {
+  body {
     font-family: "Helvetica Neue", Helvetica, sans-serif;
   }
 </style>

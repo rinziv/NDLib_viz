@@ -1,22 +1,33 @@
 <template>
-    <el-col :span="8">
-      <h4>3. Run iteration</h4>
+    <div v-if="hasModel">
+      <h4>3. Run iterations</h4>
       <p>Execute the model over the network</p>
+      <el-slider :min="1" show-tooltip show-input v-model="nIterations"></el-slider>
       <el-button type="primary" icon="caret-right" v-on:click="runIterations">Run Iterations</el-button>
-    </el-col>
+    </div>
+    <div v-else>
+      <h4>3. Run iterations</h4>
+      <p>Create a network and (at least) a model to run iterations.</p>
+    </div>
 </template>
 
 <script>
 
   export default {
     name: 'IterationBrowser',
-
+    data: function(){
+      return {
+        nIterations:10,
+      }
+    },
     computed:{
-
+      hasModel: function(){
+        return this.$store.getters.hasModels;
+      }
     },
     methods:{
       runIterations: function(){
-        this.$store.dispatch('iterate',{bunch:20});
+        this.$store.dispatch('iterate',{bunch:this.nIterations});
       }
     }
   }
