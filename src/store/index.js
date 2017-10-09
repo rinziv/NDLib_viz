@@ -62,7 +62,8 @@ export const store = new Vuex.Store({
     hasNetwork: false,
     hasModels: false,
     activeModel:null,
-    updatedIterations: 0 // a counter to change everytime a new iteration is run
+    updatedIterations: 0, // a counter to change everytime a new iteration is run
+    currentIteration: -1 // a selector to maintain the reference to currently selected iteration
   },
   mutations:{
     setToken: function (state,token){
@@ -144,8 +145,9 @@ export const store = new Vuex.Store({
         state.content.series[model] = sums;
       })
       state.updatedIterations++;
-
-
+    },
+    updateCurrentIteration: function(state, iteration){
+      state.currentIteration = iteration;
     }
   },
   actions:{
@@ -312,6 +314,14 @@ export const store = new Vuex.Store({
     },
     activeModel: function(state){
       return state.activeModel;
+    },
+    currentIteration: function(state){
+      return state.currentIteration;
+    },
+    getActiveModelDescriptor: function(state){
+      if(state.activeModel)
+        return modelDescriptors[state.activeModel.split('_')[0]];
+      else return null;
     }
   }
 })

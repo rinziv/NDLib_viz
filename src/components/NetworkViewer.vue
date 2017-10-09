@@ -13,6 +13,29 @@
   var d3Quadtree = require('d3-quadtree');
   var d3 = require('d3');
 
+
+  function NetworkTheme(_model, _modelDescriptor, _iteration){
+    this.defaultColor = "gray";
+    this.model = _model;
+    this.modelDescriptor = _modelDescriptor;
+    this.iteration = _iteration;
+  }
+
+  NetworkTheme.prototype.getNodeColor = function(n){
+    if((this.model) && (this.modelDescriptor)){
+      var iteration = this.iteration;
+      var ns = n.events[this.model]
+        .filter(function(e){
+          return e.i <= iteration
+        }).slice(-1)[0].s;
+      return this.modelDescriptor['nodeColor'](ns);
+    }
+    else
+      return this.defaultColor;
+  }
+
+
+
   function NetworkLayout(){
     var graph = {};
 
@@ -32,20 +55,23 @@
       .x(function(d){return d.x})
       .y(function(d){return d.y});
 
-    var theme = {
-      odd: {
-        evaluate: function(d){
-          return d.id % 2 != 0
-        },
-        color: "pink"
-      },
-      even: {
-        evaluate: function(d){
-          return d.id % 2 ==0
-        },
-        color: "steelblue"
-      }
-    }
+//    var theme = {
+//      odd: {
+//        evaluate: function(d){
+//          return d.id % 2 != 0
+//        },
+//        color: "pink"
+//      },
+//      even: {
+//        evaluate: function(d){
+//          return d.id % 2 ==0
+//        },
+//        color: "steelblue"
+//      }
+//    };
+
+      var theme = new NetworkTheme(null,null,0);
+
 
 
     function me(selection){
@@ -72,8 +98,6 @@
       tick();
 //      simulation.alpha(0.1);
 //      simulation.restart();
-
-
     }
 
     function isNetworkManageable(){
@@ -92,6 +116,7 @@
     function isVisible(tl, br, d){
       return (d.x >= tl[0]) && (d.x < br[0]) && (d.y >= tl[1]) && (d.y < br[1])
     }
+
 
     function tick(){
       console.log("tick");
@@ -134,54 +159,44 @@
       ctx.stroke();
 
       // draw nodes
-      d3.entries(theme).forEach(function(e) {
-        var currentColor = e.value['color'];
-        ctx.fillStyle = currentColor;
-        ctx.beginPath();
+//      d3.entries(theme).forEach(function(e) {
+//        var currentColor = e.value['color'];
+//        ctx.fillStyle = currentColor;
+//        ctx.beginPath();
+//        graph.nodes
+//          .filter(e.value['evaluate'])
+//          .forEach(function (d) {
+//            if (isVisible(tl, br, d)) {
+//              ctx.moveTo(d.x, d.y);
+//              ctx.arc(d.x, d.y, 4.5, 0, 2 * Math.PI);
+//            }
+//          });
+//        ctx.fill()
+//      });
+
+
         graph.nodes
-          .filter(e.value['evaluate'])
-          .forEach(function (d) {
-            if (isVisible(tl, br, d)) {
+          .forEach(function(d){
+            //var currentColor = theme//iteration>=0 ? "pink" : "gray";  // determine color of the node
+            if(isVisible(tl,br,d)){
+              ctx.fillStyle = theme.getNodeColor(d);//currentColor;
+              ctx.beginPath();
               ctx.moveTo(d.x, d.y);
               ctx.arc(d.x, d.y, 4.5, 0, 2 * Math.PI);
+              ctx.fill();
             }
-          });
-        ctx.fill()
-      });
-
-
-//
-//      ctx.fillStyle = 'darkgray';
-//      ctx.globalAlpha = 1.0;
-//      ctx.beginPath();
-//      graph.nodes.forEach(function(d){
-//        if(isVisible(tl,br,d)){
-//          ctx.moveTo(d.x,d.y);
-//          ctx.arc(d.x, d.y, 4.5, 0, 2 * Math.PI);
-//        }
-//      })
-//      ctx.fill();
-
-
-
-//      ctx.fillStyle = 'red';
-//      ctx.beginPath();
-//      ctx.moveTo(tl[0],tl[1]);
-//      ctx.arc(tl[0],tl[1],5,0,2*Math.PI);
-//      ctx.moveTo(br[0],br[1]);
-//      ctx.arc(br[0],br[1],5,0,2*Math.PI);
-//      ctx.fill();
-//
-//      ctx.fillStyle = 'green';
-//      ctx.beginPath();
-//      ctx.moveTo(0,0);
-//      ctx.arc(0,0,5,0,2*Math.PI);
-
-      ctx.fill();
+          })
 
       ctx.restore();
+    }
 
 
+
+    me.redraw = function(_iteration, _modelDescriptor, _activeModel){
+      theme = new NetworkTheme(_activeModel, _modelDescriptor, _iteration);
+      console.log(theme);
+
+      tick();
     }
 
     return me;
@@ -204,7 +219,13 @@
     computed:{
       network: function(){
         return this.$store.getters.getNetwork;
-      }
+      },
+      currentIteration: function(){
+        return this.$store.getters.currentIteration;
+      },
+      activeModel: function(){
+        return this.$store.state.activeModel;
+      },
     },
     watch:{
       network: function(newNetwork){
@@ -215,6 +236,10 @@
             links: newNetwork.links
           })
           .call(this.networkLayout);
+      },
+      currentIteration: function(currentIteration){
+        console.log("newValue", currentIteration);
+        this.networkLayout.redraw(currentIteration, this.$store.getters.getActiveModelDescriptor, this.$store.getters.activeModel);
       }
     }
   }

@@ -35,6 +35,7 @@
       }
     },
     mounted:function(){
+      var that = this;
       var body = d3.select(this.$refs.modelviz);
 //        .append("div")
 //        .text("Mouse over the chart to select a time instant of the simulation");
@@ -62,6 +63,11 @@
         var chart = nv.models.lineChart()
           .useInteractiveGuideline(true)
           .margin({left:30});
+
+        chart.interactiveLayer.dispatch.on("elementMousemove.test", function(e){
+          that.$store.commit('updateCurrentIteration',Math.round(e.pointXValue));
+        });
+
         myCharts[i] = chart;
       })
     },
