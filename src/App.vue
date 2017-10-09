@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="container page-component">
+  <div id="app" class="page-container">
     <Experiment></Experiment>
 
     <el-row>
@@ -48,5 +48,11 @@ export default {
 <style>
   body {
     font-family: "Helvetica Neue", Helvetica, sans-serif;
+  }
+
+  #app{
+    width: 1140px;
+    padding: 0 30px;
+    margin: 0 auto;
   }
 </style>

@@ -5,7 +5,7 @@
       <div class="list-group">
         <el-row :gutter="3">
           <el-col v-for="(value,key) in models" :key="key" :span="8">
-            <el-button :key="key" v-on:click="selectModel(key)">{{key}}</el-button>
+            <el-button :key="key" v-on:click="selectModel(key)" v-bind:type="(key === activeModel ? 'primary': '')">{{key}}</el-button>
           </el-col>
         </el-row>
       </div>
@@ -58,7 +58,11 @@
       },
       models: function () {
         return this.$store.getters.getModels;
+      },
+      activeModel: function(){
+        return this.$store.getters.activeModel;
       }
+
     },
     methods: {
       selectModel: function (key) {

@@ -1,6 +1,6 @@
 <template>
     <el-col :span="12">
-      <h4>Network</h4>
+      <h4>Network Visualization</h4>
       <canvas :width="width" :height="height" id="netviz" ref="netviz"></canvas>
     </el-col>
 </template>

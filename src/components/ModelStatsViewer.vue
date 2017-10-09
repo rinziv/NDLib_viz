@@ -2,9 +2,9 @@
     <div class="experiment-model-stats-viewer col-md-6">
       <h4>Model Statistics</h4>
       <div v-if="this.$store.state.activeModel">
-        <h6 >Selected Model: {{activeModel}}</h6>
+        <h5>Selected Model: {{activeModel}}</h5>
 
-        <div class="row">
+        <div class="model-parameters">
           <p v-for="(v,k) in modelParameters">
             <strong>{{k}}:</strong>{{v}}
           </p>
@@ -35,9 +35,9 @@
       }
     },
     mounted:function(){
-      var body = d3.select(this.$refs.modelviz)
-        .append("div")
-        .text("Mouse over the chart to select a time instant of the simulation");
+      var body = d3.select(this.$refs.modelviz);
+//        .append("div")
+//        .text("Mouse over the chart to select a time instant of the simulation");
 
       // charts
       var charts = body.append("div")
@@ -81,12 +81,26 @@
         })
 
         return res;
+      },
+      numIterations: function(){
+        return this.$store.getters.getNumIterations;
       }
     },
     watch:{
       activeModel: function(newModel){
-        console.log(newModel);
-        var series = this.$store.state.content.series[newModel];
+        console.log("newMOdel",newModel);
+
+          this.updateChartData();
+
+      },
+      numIterations: function(newNumber){
+        console.log("newIterations", newNumber);
+        this.updateChartData();
+      }
+    },
+    methods:{
+      updateChartData: function(){
+        var series = this.$store.state.content.series[this.$store.state.activeModel];
         if(series){
           d3.select(this.$refs.modelviz).select("div.charts .trend-chart svg")
             .datum(d3.entries(series).map(function(d){
@@ -120,5 +134,10 @@
 </script>
 
 <style>
-
+  .model-parameters{
+    font-size: 0.8em;
+  }
+  .model-parameters strong{
+    margin-right: 5px;
+  }
 </style>

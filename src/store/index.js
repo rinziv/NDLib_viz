@@ -14,7 +14,7 @@ const modelDescriptors ={
   SI:{
     state_labels:{
       0:"Susceptible",
-        1:"Infected"
+      1:"Infected"
     },
     nodeColor: d3.scale.category20()
       .domain([0,1])
@@ -62,6 +62,7 @@ export const store = new Vuex.Store({
     hasNetwork: false,
     hasModels: false,
     activeModel:null,
+    updatedIterations: 0 // a counter to change everytime a new iteration is run
   },
   mutations:{
     setToken: function (state,token){
@@ -142,7 +143,7 @@ export const store = new Vuex.Store({
         // console.log("mv",sums);
         state.content.series[model] = sums;
       })
-
+      state.updatedIterations++;
 
 
     }
@@ -304,6 +305,13 @@ export const store = new Vuex.Store({
 
     getModels: function(state){
       return state.describe.Models ? state.describe.Models:  {};
+    },
+
+    getNumIterations: function(state){
+      return state.updatedIterations;
+    },
+    activeModel: function(state){
+      return state.activeModel;
     }
   }
 })
