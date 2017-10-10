@@ -322,6 +322,9 @@ export const store = new Vuex.Store({
       if(state.activeModel)
         return modelDescriptors[state.activeModel.split('_')[0]];
       else return null;
+    },
+    getActiveModel: function(state){
+      return state.activeModel;
     }
   }
 })

@@ -11,28 +11,7 @@
   var d3Selection = require('d3-selection');
   var d3Zoom = require('d3-zoom');
   var d3Quadtree = require('d3-quadtree');
-  var d3 = require('d3');
-
-
-  function NetworkTheme(_model, _modelDescriptor, _iteration){
-    this.defaultColor = "gray";
-    this.model = _model;
-    this.modelDescriptor = _modelDescriptor;
-    this.iteration = _iteration;
-  }
-
-  NetworkTheme.prototype.getNodeColor = function(n){
-    if((this.model) && (this.modelDescriptor)){
-      var iteration = this.iteration;
-      var ns = n.events[this.model]
-        .filter(function(e){
-          return e.i <= iteration
-        }).slice(-1)[0].s;
-      return this.modelDescriptor['nodeColor'](ns);
-    }
-    else
-      return this.defaultColor;
-  }
+//  var d3 = require('d3');
 
 
 
@@ -54,25 +33,6 @@
     var qtree = d3Quadtree.quadtree()
       .x(function(d){return d.x})
       .y(function(d){return d.y});
-
-//    var theme = {
-//      odd: {
-//        evaluate: function(d){
-//          return d.id % 2 != 0
-//        },
-//        color: "pink"
-//      },
-//      even: {
-//        evaluate: function(d){
-//          return d.id % 2 ==0
-//        },
-//        color: "steelblue"
-//      }
-//    };
-
-      var theme = new NetworkTheme(null,null,0);
-
-
 
     function me(selection){
       graph = selection.datum();
@@ -96,8 +56,6 @@
       simulation
         .force("link").links(graph['links']);
       tick();
-//      simulation.alpha(0.1);
-//      simulation.restart();
     }
 
     function isNetworkManageable(){
@@ -179,11 +137,15 @@
           .forEach(function(d){
             //var currentColor = theme//iteration>=0 ? "pink" : "gray";  // determine color of the node
             if(isVisible(tl,br,d)){
-              ctx.fillStyle = theme.getNodeColor(d);//currentColor;
+              ctx.fillStyle = d.color;//theme.getNodeColor(d);//currentColor;
               ctx.beginPath();
-              ctx.moveTo(d.x, d.y);
+              ctx.moveTo(d.x + 4.5, d.y);
               ctx.arc(d.x, d.y, 4.5, 0, 2 * Math.PI);
               ctx.fill();
+              if(d.stroke){
+                ctx.strokeStyle = d.stroke;
+                ctx.stroke();
+              }
             }
           })
 
@@ -193,9 +155,7 @@
 
 
     me.redraw = function(_iteration, _modelDescriptor, _activeModel){
-      theme = new NetworkTheme(_activeModel, _modelDescriptor, _iteration);
-      console.log(theme);
-
+      //theme = new NetworkTheme(_activeModel, _modelDescriptor, _iteration);
       tick();
     }
 
@@ -238,8 +198,28 @@
           .call(this.networkLayout);
       },
       currentIteration: function(currentIteration){
-        console.log("newValue", currentIteration);
-        this.networkLayout.redraw(currentIteration, this.$store.getters.getActiveModelDescriptor, this.$store.getters.activeModel);
+        var graph = this.$store.getters.getNetwork;
+        var activeModel = this.$store.getters.getActiveModel;
+        var modelDescriptor = this.$store.getters.getActiveModelDescriptor;
+
+        graph.nodes.forEach(function(n){
+          if((n.events) && (activeModel) && (n.events[activeModel]) && (modelDescriptor)){
+
+            var ns = n.events[activeModel]
+              .filter(function(e){
+                return e.i <= currentIteration
+              }).slice(-1)[0];
+            n.color = modelDescriptor['nodeColor'](ns.s);
+            n.stroke = (ns.i === currentIteration) ? "black" : null;
+          }
+          else
+            n.color = "gray";
+        })
+
+        // store nodeColor within each node
+
+
+        this.networkLayout.redraw();
       }
     }
   }
