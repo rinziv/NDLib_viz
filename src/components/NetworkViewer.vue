@@ -77,7 +77,7 @@
 
 
     function tick(){
-      console.log("tick");
+//      console.log("tick");
       ctx.save();
       ctx.clearRect(0,0,width,height);
       ctx.translate(currentTransform.x, currentTransform.y);
@@ -115,7 +115,7 @@
 
       });
       ctx.stroke();
-
+      ctx.globalAlpha = 1;
       // draw nodes
 //      d3.entries(theme).forEach(function(e) {
 //        var currentColor = e.value['color'];
@@ -137,7 +137,7 @@
           .forEach(function(d){
             //var currentColor = theme//iteration>=0 ? "pink" : "gray";  // determine color of the node
             if(isVisible(tl,br,d)){
-              ctx.fillStyle = d.color;//theme.getNodeColor(d);//currentColor;
+              ctx.fillStyle =  d.color  || 'darkgray';//theme.getNodeColor(d);//currentColor;
               ctx.beginPath();
               ctx.moveTo(d.x + 4.5, d.y);
               ctx.arc(d.x, d.y, 4.5, 0, 2 * Math.PI);

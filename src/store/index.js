@@ -10,14 +10,21 @@ Vue.use(Vuex);
 
 const API_URL='http://localhost:5000/api/';
 
+const colorScheme = [ '#FBCEAE',  // susceptible
+                      '#EE4566',  // infected
+                      '#84AF9C',  // recovered
+                      '#335B7A', '#B96980'];
+
+
 const modelDescriptors ={
   SI:{
     state_labels:{
       0:"Susceptible",
       1:"Infected"
     },
-    nodeColor: d3.scale.category20()
+    nodeColor: d3.scale.ordinal()
       .domain([0,1])
+      .range(colorScheme)
     // .range(colorbrewer['RdYlBu'][3])
   },
   SIR:{
@@ -26,8 +33,9 @@ const modelDescriptors ={
         1:"Infected",
         2:"Recovered"
     },
-    nodeColor: d3.scale.category20()
+    nodeColor: d3.scale.ordinal()
       .domain([0,1,2])
+      .range(colorScheme)
     // .range(colorbrewer['RdYlBu'][3])
   },
 }

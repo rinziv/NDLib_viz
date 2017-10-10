@@ -78,7 +78,6 @@
       modelParameters: function(){
         var key = this.$store.state.activeModel;
         var descr = this.$store.state.describe.Models[key];
-        console.log(descr);
         var res = {};
         Object.keys(descr).filter(function(k){
           return k != "selected_initial_infected"
@@ -94,8 +93,6 @@
     },
     watch:{
       activeModel: function(newModel){
-        console.log("newMOdel",newModel);
-
           this.updateChartData();
 
       },
@@ -107,6 +104,7 @@
     methods:{
       updateChartData: function(){
         var series = this.$store.state.content.series[this.$store.state.activeModel];
+        var md = this.$store.getters.getActiveModelDescriptor;
         if(series){
           d3.select(this.$refs.modelviz).select("div.charts .trend-chart svg")
             .datum(d3.entries(series).map(function(d){
@@ -116,7 +114,7 @@
                 values: d.value.values.map(function(v,i){
                   return {x:i, y:v}
                 }),
-                // color: nodeColor(d.key)
+                color: md.nodeColor(d.key)
               }
             }))
             .call(this.nvCharts[0]);
@@ -129,7 +127,8 @@
                   return {
                     x:i, y: v - d.value.values[i]
                   }
-                })
+                }),
+                color: md.nodeColor(d.key)
               }
             }))
             .call(this.nvCharts[1]);
