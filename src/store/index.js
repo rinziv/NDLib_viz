@@ -40,7 +40,6 @@ const modelDescriptors ={
   },
 }
 
-
 var instance = axios.create({
   baseURL: API_URL
 })

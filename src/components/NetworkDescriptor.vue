@@ -9,10 +9,36 @@
         <el-col>
           <h4>1. Create Network</h4>
           <p>Create a network to run your simulation</p>
-          <el-button type="primary" icon="plus" @click="createNetwork">Create Network</el-button>
+          <el-button type="primary" icon="plus" @click="dialogFormVisible = true">Create Network</el-button>
         </el-col>
       </el-row>
+
+      <el-dialog title="Create a network" :visible.sync="dialogFormVisible">
+        <el-form :model="form">
+          <el-form-item label="Generator" :label-width="formLabelWidth">
+            <el-select v-model="form.values.generator" placeholder="Please select a generator">
+              <el-option v-for="g in availableGenerators" :key="g.name" :label="g.name" :value="g.name"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            v-for="(v, k) in generatorDescriptors[form.values.generator]"
+            :label="v.label"
+            :key="k"
+            :prop="form.values[form.values.generator][k]"
+            :rules="{
+                required: true, message: 'required parameter', trigger: 'blur'
+            }"
+          >
+            <el-input v-model="form.values[form.values.generator][k]"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">Cancel</el-button>
+    <el-button type="primary" @click="createNetwork">Confirm</el-button>
+  </span>
+      </el-dialog>
     </div>
+
 
   <!--<div class="row">-->
   <!--<p>No network loaded. Create a new one</p>-->
@@ -48,7 +74,59 @@
     name: 'NetworkDescriptor',
     data: function () {
       return {
-        generator:'ERGraph'
+        dialogFormVisible: false,
+        form: {
+          values:{
+            generator: 'ERGraph',
+            ERGraph:{},
+            BAGraph: {},
+            WattsStrogatzGraph: {},
+            CompleteGraph: {}
+          },
+        },
+        formLabelWidth: '120px',
+        generatorDescriptors: {
+          ERGraph:{
+            n: {
+              label: "number of nodes",
+              range: [200,3000]
+            },
+            p:{
+              label: "rewiring probability",
+              range: [0,1]
+            }
+          },
+          BAGraph:{
+            n: {
+              label: "number of nodes",
+              range: [200,3000]
+            },
+            p:{
+              label: "number of edges attached to a new node",
+              range: [1,50]
+            }
+          },
+          WattsStrogatzGraph:{
+            n: {
+              label: "number of nodes",
+              range: [200,3000]
+            },
+            k:{
+              label: "Each node is connected to k nearest neighbors in ring topology",
+              range: [1,50]
+            },
+            p:{
+              label: "rewiring probability",
+              range: [0,1]
+            }
+          },
+          CompleteGraph:{
+            n: {
+              label: "number of nodes",
+              range: [200,3000]
+            },
+          }
+        }
       }
     },
     computed:{
@@ -68,8 +146,21 @@
     },
     methods:{
       createNetwork: function () {
-        this.$store.dispatch('generateNetwork',{generator:'ERGraph',params:{n:500,p:0.01}});
-      }
+        console.log("form", this.form.values);
+        var selectedGenerator = this.form.values.generator;
+        var uri = this.$store.getters.availableGenerators.filter(function(g){
+          return g.name === selectedGenerator
+        })[0].uri.split('/').slice(-1)[0];
+
+        this.$store.dispatch('generateNetwork',{
+          generator:uri,
+          params:this.form.values[selectedGenerator]
+        });
+
+//        this.$store.dispatch('generateNetwork',{generator:'ERGraph',params:{n:500,p:0.01}});
+
+        this.dialogFormVisible = false;
+      },
     }
   }
 </script>
