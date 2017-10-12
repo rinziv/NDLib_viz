@@ -295,7 +295,9 @@ export const store = new Vuex.Store({
     availableGenerators: function(state){
       return state.availableGenerators;
     },
-
+    availableModels: function(state){
+      return state.availableModels;
+    },
     hasModels: function(state){
       return state.describe.Models && Object.keys(state.describe.Models).length
     },

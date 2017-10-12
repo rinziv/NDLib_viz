@@ -16,7 +16,33 @@
         <p>Choose one or more models from the library</p>
       </el-col>
     </el-row>
-    <el-button type="primary" icon="menu" v-on:click="appendModel">Add model</el-button>
+    <el-button type="primary" icon="menu" @click="dialogFormVisible = true">Add model</el-button>
+
+    <el-dialog title="Append a model" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="Model" :label-width="formLabelWidth">
+          <el-select v-model="form.values.model" placeholder="Please select a model">
+            <el-option v-for="g in availableModels" :key="g.name" :label="g.name" :value="g.name"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          v-for="(v, k) in modelDescriptors[form.values.model]"
+          :label="v.label"
+          :key="k"
+          :prop="form.values[form.values.model][k]"
+          :rules="{
+                required: true, message: 'required parameter', trigger: 'blur'
+            }"
+        >
+          <el-input v-model="form.values[form.values.model][k]"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="appendModel">Confirm</el-button>
+        </span>
+    </el-dialog>
+
   </div>
 
 
@@ -50,7 +76,61 @@
 
   export default {
     name: 'ModelsList',
+    data: function () {
+      return {
+        dialogFormVisible: false,
+        form: {
+          values:{
+            model: 'SIR',
+            SIR:{},
+            SI: {},
+            SIS: {}
 
+          },
+        },
+        formLabelWidth: '120px',
+        modelDescriptors: {
+          SIR:{
+            beta: {
+              label: "Infection rate",
+              range: [0,1]
+            },
+            gamma: {
+              label: "Recovery rate",
+              range: [0,1]
+            },
+            infected: {
+              label: "The initial percentage of infected nodes.",
+              range: [0,1]
+            },
+          },
+          SI:{
+            beta: {
+              label: "Infection rate",
+              range: [0,1]
+            },
+            infected: {
+              label: "The initial percentage of infected nodes.",
+              range: [0,1]
+            },
+          },
+          SIS:{
+            beta: {
+              label: "Infection rate",
+              range: [0,1]
+            },
+            lambda: {
+              label: "Recovery rate",
+              range: [0,1]
+            },
+            infected: {
+              label: "The initial percentage of infected nodes.",
+              range: [0,1]
+            },
+          },
+        }
+      }
+    },
     computed: {
 
       hasModel: function () {
@@ -61,6 +141,9 @@
       },
       activeModel: function(){
         return this.$store.getters.activeModel;
+      },
+      availableModels: function(){
+        return this.$store.getters.availableModels;
       }
 
     },
@@ -70,7 +153,22 @@
         this.$store.state.activeModel = key;
       },
       appendModel: function(){
-        this.$store.dispatch('appendModel',{model:'SIR',params:{beta:0.1,infected:0.2,gamma:0.01}});
+        console.log("form", this.form.values);
+        var selectedModel = this.form.values.model;
+        var uri = this.$store.getters.availableModels.filter(function(g){
+          return g.name === selectedModel
+        })[0].uri.split('/').slice(-1)[0];
+
+        this.$store.dispatch('appendModel',{
+          model:selectedModel,
+          params:this.form.values[selectedModel]
+        });
+
+
+        this.dialogFormVisible = false;
+
+
+        //this.$store.dispatch('appendModel',{model:'SIR',params:{beta:0.1,infected:0.2,gamma:0.01}});
       }
     }
   }

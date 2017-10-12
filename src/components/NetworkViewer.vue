@@ -55,6 +55,8 @@
       }
       simulation
         .force("link").links(graph['links']);
+
+      simulation.alpha(1).restart();
       tick();
     }
 

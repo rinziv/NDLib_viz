@@ -33,9 +33,9 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogFormVisible = false">Cancel</el-button>
-    <el-button type="primary" @click="createNetwork">Confirm</el-button>
-  </span>
+          <el-button @click="dialogFormVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="createNetwork">Confirm</el-button>
+        </span>
       </el-dialog>
     </div>
 
@@ -101,7 +101,7 @@
               label: "number of nodes",
               range: [200,3000]
             },
-            p:{
+            m:{
               label: "number of edges attached to a new node",
               range: [1,50]
             }
