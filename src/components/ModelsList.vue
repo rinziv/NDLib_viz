@@ -84,8 +84,10 @@
             model: 'SIR',
             SIR:{},
             SI: {},
-            SIS: {}
-
+            SIS: {},
+            SEIS: {},
+            SEIR: {},
+            Threshold: {}
           },
         },
         formLabelWidth: '120px',
@@ -125,6 +127,52 @@
             },
             infected: {
               label: "The initial percentage of infected nodes.",
+              range: [0,1]
+            },
+          },
+          Threshold:{
+            threshold: {
+              label: "A fixed threshold value for all the nodes: ",
+              range: [0,1]
+            },
+            infected: {
+              label: "The initial percentage of infected nodes.",
+              range: [0,1]
+            },
+          },
+          SEIS:{
+            beta: {
+              label: "Infection rate",
+              range: [0,1]
+            },
+            lambda: {
+              label: "Recovery rate",
+              range: [0,1]
+            },
+            infected: {
+              label: "The initial percentage of infected nodes.",
+              range: [0,1]
+            },
+            alpha: {
+              label: "Incubation period.",
+              range: [0,1]
+            },
+          },
+          SEIR:{
+            beta: {
+              label: "Infection rate",
+              range: [0,1]
+            },
+            gamma: {
+              label: "Recovery rate",
+              range: [0,1]
+            },
+            infected: {
+              label: "The initial percentage of infected nodes.",
+              range: [0,1]
+            },
+            alpha: {
+              label: "Incubation period.",
               range: [0,1]
             },
           },

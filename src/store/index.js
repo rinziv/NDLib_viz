@@ -16,6 +16,9 @@ const colorScheme = [ '#FBCEAE',  // susceptible
                       '#B96980'];
 
 
+// To configure a model endpoint, add a descriptor in the list below.
+// Add a configuration for the parameter form in the ModelList.vue file as well
+
 const modelDescriptors ={
   SI:{
     state_labels:{
@@ -48,6 +51,41 @@ const modelDescriptors ={
       .range(colorScheme)
     // .range(colorbrewer['RdYlBu'][3])
   },
+  SEIR:{
+    state_labels:{
+      0:"Susceptible",
+      1:"Exposed",
+      2:"Infected",
+      3:"Recovered"
+    },
+    nodeColor: d3.scale.ordinal()
+      .domain([0,1,2,3])
+      .range(colorScheme)
+    // .range(colorbrewer['RdYlBu'][3])
+  },
+  SEIS:{
+    state_labels:{
+      0:"Susceptible",
+      1:"Exposed",
+      2:"Infected"
+    },
+    nodeColor: d3.scale.ordinal()
+      .domain([0,1,2])
+      .range(colorScheme)
+    // .range(colorbrewer['RdYlBu'][3])
+  },
+  Threshold:{
+    state_labels:{
+      0:"Susceptible",
+      1:"Exposed",
+      2:"Infected"
+    },
+    nodeColor: d3.scale.ordinal()
+      .domain([0,1,2])
+      .range(colorScheme)
+    // .range(colorbrewer['RdYlBu'][3])
+  },
+
 }
 
 var instance = axios.create({
