@@ -20,7 +20,6 @@
 </template>
 
 <script>
-  var nvstyle = require("nvd3/build/nv.d3.css");
   var d3 = require('d3');
   var nv = require('nvd3');
 

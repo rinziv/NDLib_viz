@@ -2,12 +2,12 @@
     <div v-if="hasModel">
       <h4>3. Run iterations</h4>
       <p>Execute the model over the network</p>
-      <p>Which model(s) to use for the simulation? <el-switch
-        v-model="applyToAll" :width=120
-        on-text="All models"
-        off-text="Active model"
-        off-color="#13ce66">
-      </el-switch></p>
+      <!--<p>Which model(s) to use for the simulation? <el-switch-->
+        <!--v-model="applyToAll" :width=120-->
+        <!--on-text="All models"-->
+        <!--off-text="Active model"-->
+        <!--off-color="#13ce66">-->
+      <!--</el-switch></p>-->
       <el-slider :min="1" show-tooltip show-input v-model="nIterations"></el-slider>
       <el-button type="primary" icon="caret-right" v-on:click="runIterations" v-bind:loading="isLoading">Run Iterations</el-button>
     </div>

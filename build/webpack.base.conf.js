@@ -2,6 +2,7 @@ var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
+var webpack = require('webpack')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -23,6 +24,7 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       'nvd3': 'nvd3/build/nv.d3.js',
+      'nvd3css': 'nvd3/build/nv.d3.css',
       '@': resolve('src'),
     }
   },
@@ -67,6 +69,9 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       $: 'jquery'
+    }),
+    new webpack.ProvidePlugin({
+      nv: 'nvd3'
     })
 
   ]

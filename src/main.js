@@ -6,6 +6,8 @@ import 'element-ui/lib/theme-default/index.css'
 import App from './App'
 
 
+require("../node_modules/nvd3/build/nv.d3.css");
+
 
 import {store} from './store'
 
