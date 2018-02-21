@@ -1,6 +1,6 @@
-# vuetest
+# Network Diffusion Library Visualization
 
-> A Vue.js project
+This is a web application to visualize the results of simulation from a NDLib RESTful service
 
 ## Build Setup
 
