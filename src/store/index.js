@@ -19,7 +19,7 @@ const colorScheme = [ '#FBCEAE',  // susceptible
 // To configure a model endpoint, add a descriptor in the list below.
 // Add a configuration for the parameter form in the ModelList.vue file as well
 
-var modelDescriptors = {};
+
 
 const modelDescriptors2 ={
   SI:{
@@ -107,7 +107,11 @@ function prepareRequestParameters(obj, injectToken){
 export const store = new Vuex.Store({
   state:{
     token:'',
-    availableModels:[],
+    availableModels:{
+      SIR:{
+        params:{}
+      }
+    },
     availableGenerators:[],
     describe:{},
     content:{
@@ -132,21 +136,33 @@ export const store = new Vuex.Store({
     },
 
     setAvailableModels: function (state, models) {
-      state.availableModels = models;
+      // state.availableModels = models;
+      var modelDescriptors = {};
       models.filter(function(m){
         return m.discrete
       }).forEach(function(m){
         modelDescriptors[m.name] = {};
         var md = modelDescriptors[m.name];
+        md.name = m.name;
         md.state_labels  = {};
+        md.params = {};
         md.nodeColor  = d3.scale.ordinal().range(colorScheme)
           .domain(d3.values(m.statuses));
         d3.entries(m.statuses).forEach(function(e){
           md.state_labels[e.value] = e.key;
         })
+        d3.keys(m.params)
+          .filter(function(k){
+            return k!=='token'
+          }).forEach(function(k){
+          md.params[k] = {}
+          md.params[k].label = m.params[k];
+          md.params[k].range = [0,1];
+        })
+        md.uri  = m.uri;
 
-
-      })
+      });
+      state.availableModels = modelDescriptors;
       console.log("Model descriptor", modelDescriptors);
       console.log("All models", models);
     },
@@ -192,7 +208,7 @@ export const store = new Vuex.Store({
       d3.keys(state.content.iterations).forEach(function(model){
         var numIterations = state.content.iterations[model].length;
         var modelName = model.split("_")[0];
-        var modelDescriptor  = modelDescriptors[modelName];
+        var modelDescriptor  = state.availableModels[modelName];
         console.log(modelDescriptor);
         var sums = {};
         d3.keys(modelDescriptor["state_labels"]).forEach(function(s){
@@ -395,7 +411,7 @@ export const store = new Vuex.Store({
     },
     getActiveModelDescriptor: function(state){
       if(state.activeModel)
-        return modelDescriptors[state.activeModel.split('_')[0]];
+        return state.availableModels[state.activeModel.split('_')[0]];
       else return null;
     },
     getActiveModel: function(state){

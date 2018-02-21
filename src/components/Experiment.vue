@@ -11,8 +11,9 @@
 
     created:  function(){
       this.$store.dispatch('createExperiment');
-      this.$store.dispatch('loadNetworkGeneratorEndpoints');
       this.$store.dispatch('loadModelsEndpoints');
+      this.$store.dispatch('loadNetworkGeneratorEndpoints');
+
     },
 
 

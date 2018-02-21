@@ -22,12 +22,12 @@
       <el-form :model="form">
         <el-form-item label="Model" :label-width="formLabelWidth">
           <el-select v-model="form.values.model" placeholder="Please select a model">
-            <el-option v-for="g in availableModels" :key="g.name" :label="g.name" :value="g.name"></el-option>
+            <el-option v-for="(g,k) in availableModels" :key="g.name" :label="g.name" :value="g.name"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
-          v-for="(v, k) in modelDescriptors[form.values.model]"
-          :label="v.label"
+          v-for="(v, k) in availableModels[form.values.model].params"
+          :label= "(v.label + ' (' + k +')')"
           :key="k"
           :prop="form.values[form.values.model][k]"
           :rules="{
@@ -87,96 +87,20 @@
             SIS: {},
             SEIS: {},
             SEIR: {},
-            Threshold: {}
+            SWIR: {},
+            Threshold: {},
+            Profile: {},
+            "Profile-Threshold": {},
+            "Independent Cascades": {},
+            "Voter": {},
+            "QVoter": {},
+            "Majority Rule": {},
+            "Sznajd": {},
+            "KerteszThreshold": {}
           },
         },
         formLabelWidth: '120px',
-        modelDescriptors: {
-          SIR:{
-            beta: {
-              label: "Infection rate",
-              range: [0,1]
-            },
-            gamma: {
-              label: "Recovery rate",
-              range: [0,1]
-            },
-            infected: {
-              label: "The initial percentage of infected nodes.",
-              range: [0,1]
-            },
-          },
-          SI:{
-            beta: {
-              label: "Infection rate",
-              range: [0,1]
-            },
-            infected: {
-              label: "The initial percentage of infected nodes.",
-              range: [0,1]
-            },
-          },
-          SIS:{
-            beta: {
-              label: "Infection rate",
-              range: [0,1]
-            },
-            lambda: {
-              label: "Recovery rate",
-              range: [0,1]
-            },
-            infected: {
-              label: "The initial percentage of infected nodes.",
-              range: [0,1]
-            },
-          },
-          Threshold:{
-            threshold: {
-              label: "A fixed threshold value for all the nodes: ",
-              range: [0,1]
-            },
-            infected: {
-              label: "The initial percentage of infected nodes.",
-              range: [0,1]
-            },
-          },
-          SEIS:{
-            beta: {
-              label: "Infection rate",
-              range: [0,1]
-            },
-            lambda: {
-              label: "Recovery rate",
-              range: [0,1]
-            },
-            infected: {
-              label: "The initial percentage of infected nodes.",
-              range: [0,1]
-            },
-            alpha: {
-              label: "Incubation period.",
-              range: [0,1]
-            },
-          },
-          SEIR:{
-            beta: {
-              label: "Infection rate",
-              range: [0,1]
-            },
-            gamma: {
-              label: "Recovery rate",
-              range: [0,1]
-            },
-            infected: {
-              label: "The initial percentage of infected nodes.",
-              range: [0,1]
-            },
-            alpha: {
-              label: "Incubation period.",
-              range: [0,1]
-            },
-          },
-        }
+
       }
     },
     computed: {
@@ -203,9 +127,7 @@
       appendModel: function(){
         console.log("form", this.form.values);
         var selectedModel = this.form.values.model;
-        var uri = this.$store.getters.availableModels.filter(function(g){
-          return g.name === selectedModel
-        })[0].uri.split('/').slice(-1)[0];
+        var uri = this.$store.getters.availableModels[selectedModel].uri.split('/').slice(-1)[0];
 
         this.$store.dispatch('appendModel',{
           model:selectedModel,
@@ -221,26 +143,7 @@
     },
     watch: {
       availableModels: function(models){
-        var ms = {};
-        models.filter(function(m){
-          return m.discrete;
-        }).forEach(function(m){
-          ms[m.name] = {
-            "statuses": m.statuses,
-            "params": {}
-          };
-
-          d3.keys(m.params)
-            .filter(function(k){
-              return k!=='token'
-            }).forEach(function(k){
-              ms[m.name]['params'][k] = {}
-            ms[m.name]['params'][k].label = m.params[k];
-            ms[m.name]['params'][k].range = [0,1];
-          })
-
-        });
-        console.log("All models watch", ms);
+        console.log("All models watch", models);
       }
 
     }
