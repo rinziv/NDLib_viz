@@ -19,7 +19,9 @@ const colorScheme = [ '#FBCEAE',  // susceptible
 // To configure a model endpoint, add a descriptor in the list below.
 // Add a configuration for the parameter form in the ModelList.vue file as well
 
-const modelDescriptors ={
+var modelDescriptors = {};
+
+const modelDescriptors2 ={
   SI:{
     state_labels:{
       0:"Susceptible",
@@ -131,6 +133,22 @@ export const store = new Vuex.Store({
 
     setAvailableModels: function (state, models) {
       state.availableModels = models;
+      models.filter(function(m){
+        return m.discrete
+      }).forEach(function(m){
+        modelDescriptors[m.name] = {};
+        var md = modelDescriptors[m.name];
+        md.state_labels  = {};
+        md.nodeColor  = d3.scale.ordinal().range(colorScheme)
+          .domain(d3.values(m.statuses));
+        d3.entries(m.statuses).forEach(function(e){
+          md.state_labels[e.value] = e.key;
+        })
+
+
+      })
+      console.log("Model descriptor", modelDescriptors);
+      console.log("All models", models);
     },
     updateExperimentDescription: function(state, description){
       state.describe = description;

@@ -218,6 +218,31 @@
 
         //this.$store.dispatch('appendModel',{model:'SIR',params:{beta:0.1,infected:0.2,gamma:0.01}});
       }
+    },
+    watch: {
+      availableModels: function(models){
+        var ms = {};
+        models.filter(function(m){
+          return m.discrete;
+        }).forEach(function(m){
+          ms[m.name] = {
+            "statuses": m.statuses,
+            "params": {}
+          };
+
+          d3.keys(m.params)
+            .filter(function(k){
+              return k!=='token'
+            }).forEach(function(k){
+              ms[m.name]['params'][k] = {}
+            ms[m.name]['params'][k].label = m.params[k];
+            ms[m.name]['params'][k].range = [0,1];
+          })
+
+        });
+        console.log("All models watch", ms);
+      }
+
     }
   }
 </script>
